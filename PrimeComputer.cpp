@@ -47,7 +47,7 @@ vector<int> PrimeComputer::computeSerial(int N) {
 
 vector<int> PrimeComputer::computeParallel(int N) {
 
-    const int THREAD_NUM = 11;
+    const int THREAD_NUM = 5;
 
     if(N <= THREAD_NUM){
         return computeSerial(N);

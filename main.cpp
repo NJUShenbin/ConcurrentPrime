@@ -5,14 +5,14 @@
 
 using namespace std;
 
-const int N = 1000*10000;
+const int N = 1000*10000*2;
 
 
 int main(void) {
 
     time_t begin,end;
     time(&begin);
-    cout << PrimeComputer::computeSerial(N).size() <<endl;
+//    cout << PrimeComputer::computeSerial(N).size() <<endl;
     time(&end);
     cout<<"serial delta time:"<< end-begin <<endl;
 
