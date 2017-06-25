@@ -1,7 +1,7 @@
 # 质数的串行和并行算法
 
 本项目是《基于多核的并行编程》的作业。题目为计算1到10^7内所有的质数。本文档比较了质数的串行和并行算法，并对性能做出一些分析。
-在Windows和Linux下分别使用了WindowsAPI和pthread库。
+在Windows和Linux下分别使用了WindowsAPI和pthread库。两平台下均可以使用openmp。
 
 ## 质数检测
 质数检测是用非常简单的算法，即对于数n，检测从1到sqrt(n)之间是否有整数可以整除n，若没有则判断为质数。
@@ -26,3 +26,73 @@
 从算法角度来讲，程序中同步和通信的开销很小，理论上应该能达到3到4的加速比。实际上没有达到,可能是进程无法完全利用4核资源。
 
 对于Linux和Window平台，结果几乎一致。
+
+## 关键代码
+判定一个数是否为质数
+```c++
+bool isPrime(int number){
+
+    if(number<=1){
+        return false;
+    }
+
+    bool prime = true;
+
+    double sqrtN = sqrt(number);
+    for(int i=2; i<=sqrtN; i++) {
+        if(number%i==0) {
+            prime = false;
+            break;
+        }
+    }
+
+    return prime;
+}
+```
+
+串行计算
+```c++
+for(int i=2; i<=N; i++) {
+    if(isPrime(i)) {
+        primes.push_back(i);
+    }
+}
+```
+
+线程库并行
+```c++
+//创建线程
+{
+  thread_handle threads[THREAD_NUM];
+  ThreadArg threadArgs[THREAD_NUM];
+
+  for(int i=0;i<THREAD_NUM;i++){
+
+      threadArgs[i].N=N;
+      threadArgs[i].threadId=i;
+      threadArgs[i].threadNumber=THREAD_NUM;
+
+      createThread(threadArgs[i],threads[i]);
+  }
+}
+
+//线程内方法
+{
+  ThreadArg* arg = (ThreadArg*)threadArg;
+  for(int i = arg-> threadId ; i<= arg->N ; i += arg->threadNumber){
+      if( isPrime(i) ){
+          arg->primes.push_back(i);
+      }
+  }
+}
+```
+
+openmp并行
+```c++
+#pragma omp parallel for reduction(+:count)
+for( int i=2; i<=N; i++) {
+    if(isPrime(i)) {
+        count++;
+    }
+}
+```
