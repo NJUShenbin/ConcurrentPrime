@@ -6,6 +6,7 @@
 #include "PrimeComputer.h"
 #include <iostream>
 #include <sstream>
+#include <omp.h>
 
 bool isPrime(int number){
 
@@ -82,6 +83,27 @@ PrimeComputer::return_t PrimeComputer::computePartPrime(void *threadArg) {
         }
     }
     return 0;
+}
+
+vector<int> PrimeComputer::computeOpenmp(int N) {
+
+    if(N <= 1){
+        return vector<int>();
+    }
+
+    vector<int> primes;
+
+    int count = 0;
+#pragma omp parallel for reduction(+:count)
+    for( int i=2; i<=N; i++) {
+        if(isPrime(i)) {
+            count++;
+        }
+    }
+    cout<<"count:"<<count<<endl;
+
+    return primes;
+
 }
 
 

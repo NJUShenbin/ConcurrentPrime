@@ -20,6 +20,7 @@ class PrimeComputer {
 public:
     static vector<int> computeSerial(int N);
     static vector<int> computeParallel(int N);
+    static vector<int> computeOpenmp(int N);
 
 private:
 
